@@ -42,7 +42,6 @@ export const useAuth = (): boolean => {
   useEffect(() => {
     const auth = getAuth(app);
 
-    console.log("auth: ", auth);
     return onAuthStateChanged(auth, (user) => {
       console.log("Firebase user: ", user);
       setUser(user);
