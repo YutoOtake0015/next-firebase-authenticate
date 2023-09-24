@@ -6,8 +6,7 @@ export default function Home() {
   console.log("user: ", user);
 
   const handleLogin = (): void => {
-    login();
-    // login().catch((error) => console.error(error));
+    login().catch((error) => console.error(error));
   };
 
   const handleLogout = (): void => {
