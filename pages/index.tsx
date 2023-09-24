@@ -3,7 +3,6 @@ import { useUser, login, logout } from "../lib/auth";
 
 export default function Home() {
   const user = useUser();
-  console.log("user: ", user);
 
   const handleLogin = (): void => {
     login().catch((error) => console.error(error));

@@ -39,11 +39,12 @@ export const useAuth = (): boolean => {
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useSetRecoilState(userState);
 
-  useEffect(() => {
-    const auth = getAuth(app);
+  const auth = getAuth(app);
+  console.log("auth: ", auth);
 
+  useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
-      console.log("Firebase user: ", user);
+      // console.log("Firebase user: ", user);
       setUser(user);
       setIsLoading(false);
     });
