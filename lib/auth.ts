@@ -1,54 +1,62 @@
 import { useEffect, useState } from "react";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import {
-  atom,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from "recoil";
-import {
-  User,
-  getAuth,
   signInWithRedirect,
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
 } from "firebase/auth";
 
-import { app } from "./firebase";
+import { auth } from "./firebase";
 
-type UserState = User | null;
+type CustomUser = {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+};
+
+type UserState = CustomUser | null;
 
 const userState = atom<UserState>({
   key: "userState",
   default: null,
-  dangerouslyAllowMutability: true,
 });
 
 export const login = (): Promise<void> => {
   const provider = new GoogleAuthProvider();
-  const auth = getAuth(app);
   return signInWithRedirect(auth, provider);
 };
 
 export const logout = (): Promise<void> => {
-  const auth = getAuth(app);
-  return signOut(auth);
+  return new Promise(async (resolve) => {
+    await signOut(auth);
+    resolve();
+  });
 };
 
 export const useAuth = (): boolean => {
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useSetRecoilState(userState);
 
-  const auth = getAuth(app);
-  console.log("auth: ", auth);
-
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
-      // console.log("Firebase user: ", user);
-      setUser(user);
+      if (user) {
+        // FirebaseのUserオブジェクトから必要なデータだけを取り出し
+        const safeUser: CustomUser = {
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          // 必要に応じて他のプロパティも追加できます
+        };
+        setUser(safeUser);
+      } else {
+        setUser(null);
+      }
       setIsLoading(false);
     });
-  }, [setUser]);
+  }, []);
 
   return isLoading;
 };
