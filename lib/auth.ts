@@ -39,8 +39,10 @@ export const useAuth = (): boolean => {
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useSetRecoilState(userState);
 
+  // authを監視して変更されていればstate更新
   useEffect(() => {
-    return onAuthStateChanged(auth, (user) => {
+    console.log("通過");
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         // FirebaseのUserオブジェクトから必要なデータだけを取り出し
         const safeUser: CustomUser = {
@@ -56,7 +58,7 @@ export const useAuth = (): boolean => {
       }
       setIsLoading(false);
     });
-  }, []);
+  });
 
   return isLoading;
 };
